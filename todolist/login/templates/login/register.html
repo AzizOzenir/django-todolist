@@ -1,0 +1,40 @@
+{% extends 'base/main.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container w-75 d-flex justify-content-center mt-5">
+  <div class="card shadow-lg">
+    <div class="card-header bg-primary text-white">
+      <h1 class="text-center">Register</h1>
+    </div>
+    <div class="card-body">
+      <form method="POST" class="row g-3">
+        {% csrf_token %}
+        <div class="col-12">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" name="username" value="{{ form.username.value }}" placeholder="Enter your username">
+        </div>
+        <div class="col-12">
+          <label for="password1" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password1" name="password1" placeholder="Enter your password">
+        </div>
+        <div class="col-12">
+          <label for="password2" class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm your password">
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary btn-block">Register</button>
+        </div>
+      </form>
+      <p class="text-center mt-3">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none">Login</a></p>
+    </div>
+  </div>
+</div>
+
+  <script src="{% static 'js/register.js' %}">
+  
+  </script>
+  
+ 
+
+{% endblock content %}

@@ -1,0 +1,85 @@
+{% extends 'base/main.html' %} 
+{% load static %}
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<div class="container-fluid  min-w-sm  max-w-50 p-2">
+    <div class="shadow mb-5 bg-white rounded">
+      <div class="header-bar">
+        <div class="user-info">
+          <div class="card-header bg-primary text-white mb-2">
+            <h1 class="text-center">{{ request.user|title }}</h1>
+          </div>
+          <h3 class="mb-0">You have <i>{{ count }}</i> incomplete task{{ count|pluralize:"s" }}</h3>
+        </div>
+        {% if request.user.is_authenticated %}
+        <div class="d-flex m-2 justify-content-between">
+          <a href="{% url 'logout' %}" class="btn btn-outline-primary me-3">Logout</a>
+          <a href="{% url 'task-create' %}" class="btn btn-primary">&#x2b;</a>
+        </div>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+        {% endif %}
+      </div>
+  
+      <div id="search-add-wrapper" class="m-2 my-3 d-flex justify-content-between">
+        <form method="GET" class="d-flex">
+          <input type="text" name="search-area" class="form-control me-2" placeholder="Search your task" value="{{ search_input }}">
+          <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+      </div>
+  
+      <!-- Hidden form. Form submits new item positions -->
+      <form style="display: none;" id="reorderForm" method="post" action="{% url 'task-reorder' %}">
+        {% csrf_token %}
+        <input type="hidden" id="positionInput" name="position">
+      </form>
+  
+      <div id="tasklist" class="task-items-wrapper m-2">
+        {% for task in tasks %}
+        <div class="task-wrapper p-2 m-2 container-fluid flex-row d-flex card bg-primary text-white mb-3" data-position="{{ task.pk }}">
+          <div class="col-2 task-icon">
+            {% if task.complete %}
+            <div class="task-complete-icon"></div>
+            {% else %}
+            <div class="task-incomplete-icon"></div>
+            {% endif %}
+          </div>
+          <div class="col-8 task-title">
+            {% if task.complete %}
+            <i><s><a href="{% url 'task-update' task.id %}" class="text-decoration-none text-white">{{ task }}</a></s></i>
+            {% else %}
+            <a href="{% url 'task-update' task.id %}" class="text-decoration-none text-white">{{ task }}</a>
+            {% endif %}
+          </div>
+          <div class="col-2 task-controls">
+            <a class="delete-link" href="{% url 'task-delete' task.id %}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash text-light" viewBox="0 0 16 16">
+                  <path d="M3.5 5.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1h-8a.5.5 0 0 1-.5-.5zm1-3.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1H4.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5H5v6a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3.5a1 1 0 0 1 1-1h1zm5-1h2a1 1 0 0 1 1 1v1H8V1zM2.5 3H2v11a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V3h-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5H14v9H2V4h.5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/>
+                </svg>
+              </a>        
+            <span class="handle">&nbsp;&#10247;</span>
+          </div>
+        </div>
+        {% empty %}
+        <div class="task-wrapper container-fluid card mb-3 p-3 bg-light">
+          <div class="text-center">
+            <h3>No new tasks are created.</h3>
+            <h3>Create a <a href="{% url 'task-create' %}" class="text-decoration-none text-danger">New task</a>!</h3>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      
+      
+      </div>
+    </div>
+  </div>
+  
+  
+
+<script src="{% static 'js/task_list.js' %}">
+  
+</script>
+
+{% endblock content %}
